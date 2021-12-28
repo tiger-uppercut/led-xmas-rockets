@@ -4,11 +4,10 @@
 #define NUM_LEDS    300
 
 CRGB leds[NUM_LEDS];
-CRGB Black = CRGB(0, 0, 0);
 CRGB Star = CRGB(1, 1, 1);
 
 float Brightness = 0.13;
-const float BaseSpeed = 0.36;
+const float BaseSpeed = 0.26;
 
 // sprite data need to be adapted if you change these
 const int SpriteAmount = 4;
@@ -77,10 +76,8 @@ void setup() {
 
 void loop() {
 
-    // turn all LED black
-    for (LedStart = 0; LedStart < NUM_LEDS; LedStart++) {
-        leds[LedStart] = Black;
-    }
+    // turn all LEDs black
+    FastLED.clear();
 
     // display random stars
     for (Rando = 0; Rando < 6; Rando++) {
@@ -128,7 +125,7 @@ void loop() {
                 // -- case A: the signal has crossed into the position of the LED
                 if (SignalEnd >= LedStart && SignalEnd <= LedEnd) {
                     Overlap = SignalEnd - LedStart;
-                    leds[LedStart] = CRGB(
+                    leds[LedStart].setRGB(
                             // BrightnessBefore + (InputBrightness * OverlapAmount * SystemBrightness)
                             constrain(leds[LedStart][0] + (Sprites[RocketBoost[RocketNr]][RocketNr][SignalNr][0] * Overlap * Brightness), 0, 255),
                             constrain(leds[LedStart][1] + (Sprites[RocketBoost[RocketNr]][RocketNr][SignalNr][1] * Overlap * Brightness), 0, 255),
@@ -139,7 +136,7 @@ void loop() {
                 // -- case B: the signal is moving out of the position of the LED
                 if (SignalStart > LedStart && SignalStart < LedEnd) {
                     Overlap = LedEnd - SignalStart;
-                    leds[LedStart] = CRGB(
+                    leds[LedStart].setRGB(
                             // BrightnessBefore + (InputBrightness * OverlapAmount * SystemBrightness)
                             constrain(leds[LedStart][0] + (Sprites[RocketBoost[RocketNr]][RocketNr][SignalNr][0] * Overlap * Brightness), 0, 255),
                             constrain(leds[LedStart][1] + (Sprites[RocketBoost[RocketNr]][RocketNr][SignalNr][1] * Overlap * Brightness), 0, 255),
@@ -153,7 +150,7 @@ void loop() {
     // render frame
     FastLED.show();
 
-    // there was no need to delay frames for a 300 LED strip on the Mega2560 board, adjust if animation is running too fast
+    // there was no need to delay frames for a 300 LED strip on the Mega2560 board, adjust this or the BaseSpeed if animation is running too fast
     // delay(10);
 }
 
